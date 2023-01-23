@@ -188,3 +188,27 @@ db.inventory.deleteMany({
 
 
 db.inventory.deleteMany({})
+
+
+db.inventory.find({
+    $or: [{
+        status: 'P'
+    },
+    {
+        status: 'D',
+        qty :{
+            gte: 75
+        }
+    }]
+})
+
+db.inventory.updateMany({
+    "size.w": {
+        $gt: 30
+        } 
+}, {
+    $set: {
+       status: 'done'
+    }
+});
+

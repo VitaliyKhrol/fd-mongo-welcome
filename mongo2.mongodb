@@ -1,0 +1,97 @@
+db.createCollection("cats",{
+    
+    validator: {
+        $jsonSchema:{
+            bsonType:"object",
+            required:['name','color','weight'],
+            properties: {
+                name:{
+                    bsonType:"string",
+                    description: "'name' must be a string"
+                },
+                color:{
+                    bsonType:"string",
+                    description: "'color' must be a string"
+                },
+                weight:{
+                    bsonType:"double",
+                    description: "'weight' must be a string"
+                },
+                adress:{
+                    bsonType:"object",
+                    required: ['city','street'],
+                    properties:{
+                        city:{
+                            bsonType:"string",
+                        },
+                        street:{
+                            bsonType:"string",
+                        }
+
+                    }
+                }
+            }
+
+        }
+    }
+})
+
+db.cats.insertOne({
+    name: 'Murkaw',
+    color:'red',
+    weight: 11.1,
+    adress:{
+        index: "11111"
+    }
+})
+
+db
+
+db.createCollection("users",{
+    validator: {
+        $jsonSchema:{
+            bsonType:"object",
+            required:['firstName','lastName','birthday','email','password'],
+            properties: {
+                firstName:{
+                    bsonType:"string",
+                    description: "'firstName' must be a string"
+                },
+                lastName:{
+                    bsonType:"string",
+                    description: "'lastName' must be a string"
+                },
+                birthday:{
+                    bsonType:"date",
+                    description: "'date' must be a date"
+                },
+                adress:{
+                    bsonType:"object",
+                    required: ['city'],
+                    properties:{
+                        city:{
+                            bsonType:"string",
+                        },
+                        street:{
+                            bsonType:"string",
+                        },
+                        house:{
+                            bsonType:"string",
+                        },
+                    }
+                },
+                email:{
+                    bsonType:"string",
+                    description: "'email' must be a string"
+                },
+                password:{
+                    bsonType:"string",
+                    description: "'password' must be a string"
+                },
+                
+            }
+
+        }
+    }
+})
+db.users.deleteMany({})
