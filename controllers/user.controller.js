@@ -21,12 +21,32 @@ module.exports.getAll = async( req, res, next) => {
     }
 }
 
-
 module.exports.getOne = async( req, res, next) => {
     try {
       const {params: {userId}}= req;
       const user = await User.findById(userId);
+      console.log(user);
       res.status(200).send(user);
+    } catch(error) {
+        next(error);
+    }
+}
+
+module.exports.deleteUser = async( req, res, next) => {
+    try {
+      const {params: {userId}}= req;
+      const user = await User.findByIdAndDelete({userId});
+      res.status(200).send(user);
+    } catch(error) {
+        next(error);
+    }
+}
+
+module.exports.updateUser = async( req, res, next) => {
+    try {
+      const {params: {userId}, body}= req;
+      const result = await User.findByIdAndUpdate(userId,body,{returnDocument:'after'});
+      res.status(200).send(result);
     } catch(error) {
         next(error);
     }

@@ -1,0 +1,278 @@
+
+db.createCollection('manufacturers', {
+    validator: {
+        $jsonSchema: {
+            bsonType: 'object',
+            required: ['name'],
+            properties: {
+                name: {
+                    bsonType: 'string'
+                },
+                address: {
+                    bsonType: 'object',
+                    required: ['country', 'city']
+                }
+            }
+        }
+    }
+});
+
+db.manufacturers.insertMany([
+    {
+        name: 'First'
+    },
+    {
+        name: 'Second',
+        address: {
+            country: 'UK',
+            city: 'London'
+        }
+    }
+]);
+
+
+db.createCollection('products',{
+    validator:{
+    $jsonSchema:{
+        bsonType:'object',
+        reruired:['name', 'price','amount','manufacturerId'],
+        properties:{
+            name:{
+                bsonType:'string',
+            },
+            price:{
+                bsonType:'double'
+            },
+            amount:{
+                bsonType:'int'
+            },
+            expiredDate:{
+                bsonType:'date'
+            },
+            manufacturerId:{
+                bsonType:'objectId'
+            }
+        }
+    }
+    }
+});
+
+
+db.products.insertMany([
+    {
+        name: 'iPhone',
+        price: 12222.22,
+        amount: 5,
+        manufacturerId: new ObjectId('63cfdcc24c3a4f941cd686da')
+    },
+     {
+        name: 'Filips',
+        price: 1112.11,
+        amount: 4,
+        manufacturerId: new ObjectId('63cfdcc24c3a4f941cd686da')
+    },
+     {
+        name: 'Alcatel',
+        price: 3333.3,
+        amount: 3,
+        manufacturerId: new ObjectId('63cfd2e1fa0453f594031019')
+    }
+]);
+
+db.products.aggregate([
+    {
+        /**
+         * from: The target collection.
+         * localField: The local join field.
+         * foreignField: The target join field.
+         * as: The name for the results.
+         * pipeline: Optional pipeline to run on the foreign collection.
+         * let: Optional variables to use in the pipeline field stages.
+         */
+        $lookup: {
+          from: 'manufacturers',
+          localField: 'manufacturerId',
+          foreignField: '_id',
+          as: 'manufacturer'
+        }
+    }, {
+        /**
+         * path: Path to the array field.
+         * includeArrayIndex: Optional name for index.
+         * preserveNullAndEmptyArrays: Optional
+         *   toggle to unwind null and empty values.
+         */
+        $unwind: "$manufacturer"
+    }, {
+        /**
+         * Provide the field name to exclude.
+         * To exclude multiple fields, pass the field names in an array.
+         */
+        $unset: 'manufacturerId'
+    }, 
+    {
+        /**
+         * _id: The id of the group.
+         * fieldN: The first field name.
+         */
+        $group: {
+          _id: "$manufacturer.name",
+            countProducts: {
+            $sum: "$amount"
+          }
+        }
+    }
+]);
+
+
+db.products.aggregate([{
+    /**
+     * Provide any number of field/order pairs.
+     */
+    $sort: {
+      price: -1
+    }},{
+        /**
+         * Provide the number of documents to limit.
+         */
+        $limit: 3
+    }
+])
+
+
+db.products.find().limit(3).skip(2);
+
+
+
+db.createCollection('students', {
+    validator: {
+        $jsonSchema: {
+            bsonType: 'object',
+            required: ['firstName','email'],
+            properties: {
+                firstName: {
+                    bsonType: 'string'
+                },
+                lastName: {
+                    bsonType: 'string'
+                },
+                email:{
+                    bsonType:"string",
+                    description: "'email' must be a string"
+                },
+                groupId: {
+                bsonType:'objectId'
+                },
+            }
+        }
+    }
+});
+
+db.students.insertMany([
+    {
+        firstName: 'Smitt',
+        lastName: 'O',
+        email:'www@mail.com',
+        groupId: new ObjectId('63cfe6c8e5ef9b0a82d70229')
+    },
+    {
+        firstName: 'Uill',
+        lastName: 'Os',
+        email:'www@gmail.com',
+        groupId: new ObjectId('63cfe6c8e5ef9b0a82d70229')
+
+    },
+    {
+        firstName: 'Smitt_TTT',
+        lastName: 'O',
+        email:'www@mail.com',
+        groupId: new ObjectId('63cfe6c8e5ef9b0a82d70229')
+
+    },
+    {
+        firstName: 'Uill_&&&',
+        lastName: 'Os',
+        email:'www@gmail.com',
+        groupId: new ObjectId('63cfe6c8e5ef9b0a82d7022a')
+    }
+]);
+
+
+db.createCollection('groups',{
+    validator:{
+    $jsonSchema:{
+        bsonType:'object',
+        required:['nameGroup', 'nameTicher'],
+        properties:{
+            nameGroup:{
+                bsonType:'string',
+            },
+            nameTicher:{
+                bsonType:'string'
+            }
+        }
+    }
+    }
+});
+
+
+db.groups.insertMany([
+    {
+        nameGroup: 'iPhone',
+        nameTicher: "Ivanov"
+    },
+     {
+        nameGroup: 'sumsung',
+        nameTicher: "Petrov"
+    }
+     
+]);
+
+db.students.aggregate([
+    {
+        /**
+         * from: The target collection.
+         * localField: The local join field.
+         * foreignField: The target join field.
+         * as: The name for the results.
+         * pipeline: Optional pipeline to run on the foreign collection.
+         * let: Optional variables to use in the pipeline field stages.
+         */
+        $lookup: {
+          from: 'groups',
+          localField: 'groupId',
+          foreignField: '_id',
+          as: 'gr'
+        }
+    }   
+    , {
+        /**
+         * path: Path to the array field.
+         * includeArrayIndex: Optional name for index.
+         * preserveNullAndEmptyArrays: Optional
+         *   toggle to unwind null and empty values.
+         */
+        $unwind: "$gr"
+    },
+    
+     {
+        /**
+         * Provide the field name to exclude.
+         * To exclude multiple fields, pass the field names in an array.
+         */
+        $unset: 'groupId'
+    }, 
+    {
+        /**
+         * _id: The id of the group.
+         * fieldN: The first field name.
+         */
+        $group: {
+          _id: "$groups.nameGroup",
+         countStudents {
+            $sum: "$amount"
+          }
+        }
+    }
+]);
+

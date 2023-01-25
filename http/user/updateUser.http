@@ -1,0 +1,9 @@
+PUT http://localhost:5003/api/users/63cee06a6cd46363589ab962 HTTP/1.1
+Content-Type: application/json
+
+{
+    "firstName": "Ivanov",
+    "lastName": "Doe",
+    "email": "doe!@fdsagg",
+    "password": "123344"
+}

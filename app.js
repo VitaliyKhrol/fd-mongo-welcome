@@ -1,11 +1,10 @@
 const express = require('express');
-const UserController = require('./controllers/user.controller');
+const rootRouter = require('./routes');
+
 
 const app = express();
+const staticMW = express.static('pulic');
 app.use(express.json());
-
-app.post('/', UserController.createUser);
-app.get('/', UserController.getAll);
-app.get('/:userId', UserController.getOne);
+app.use('/api', rootRouter);
 
 module.exports = app;

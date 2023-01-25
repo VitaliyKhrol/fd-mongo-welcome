@@ -2,7 +2,7 @@
     "development": {
         "database": "fd-db",
         "port": 27017,
-        "host": "localhost"
+        "host": "127.0.0.1"
     },
     "test": {},
     "production": {}
