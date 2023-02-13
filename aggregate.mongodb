@@ -276,3 +276,14 @@ db.students.aggregate([
     }
 ]);
 
+
+db.post.aggregate([
+    {
+        $group: {
+          _id: "$post",
+            countProducts: {
+            $sum: "$amount"
+          }
+        }
+    }
+]);
